@@ -171,41 +171,7 @@ async def on_message(message):
         except: pass
 # --- ইউটিউব ডাটা ফেচ ফাংশন --
 
-def get_latest_video():
-    try:
-        request = youtube.search().list(
-            channelId=YT_CHANNEL_ID,
-            part='snippet,id',
-            order='date',
-            maxResults=1
-        )
-        response = request.execute()
-        if response['items']:
-            v_id = response['items'][0]['id'].get('videoId')
-            v_title = response['items'][0]['snippet']['title']
-            return v_id, v_title
-    except Exception as e:
-        print(f"YouTube API Error: {e}")
-    return None, None
 
-# --- ইউটিউব অটো চেক টাস্ক (৫ মিনিট পর পর) ---
-@tasks.loop(minutes=5)
-async def check_youtube_task():
-    global last_video_id
-    v_id, v_title = get_latest_video()
-
-    if v_id and v_id != last_video_id:
-        if last_video_id is not None:
-            channel = bot.get_channel(DISCORD_ANNOUNCE_CHANNEL_ID)
-            if channel:
-                embed = discord.Embed(
-                    title="🎬 নতুন ভিডিও আপলোড হয়েছে!",
-                    description=f"**{v_title}**\n\n[ভিডিওটি দেখতে এখানে ক্লিক করুন](https://www.youtube.com/watch?v={v_id})",
-                    color=0xff0000
-                )
-                embed.set_image(url=f"https://img.youtube.com/vi/{v_id}/maxresdefault.jpg")
-                await channel.send(content="@everyone", embed=embed)
-        last_video_id = v_id
         
     # --- ৩. AI চ্যাট লজিক ---
     is_dm = isinstance(message.channel, discord.DMChannel)
