@@ -209,12 +209,10 @@ async def check_youtube_task():
         last_video_id = v_id
         
     # --- ৩. AI চ্যাট লজিক ---
-is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
+    is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
     is_dm = isinstance(message.channel, discord.DMChannel)
 
     if is_allowed_channel or is_dm:
-        user_input = message.content.replace(f'<@{bot.user.id}>', '').strip()
-        if user_input or is_dm:
         user_input = message.content.replace(f'<@{bot.user.id}>', '').replace(f'<@!{bot.user.id}>', '').strip()
         
         if user_input or not is_dm:
@@ -254,6 +252,7 @@ is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
                     await message.reply(err_msg)
 
     await bot.process_commands(message)
+
 
 # --- ৪. কমান্ডস ---
 @bot.command()
