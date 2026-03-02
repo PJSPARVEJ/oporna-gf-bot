@@ -208,7 +208,7 @@ async def check_youtube_task():
         last_video_id = v_id
         
     # --- ৩. AI চ্যাট লজিক ---
-    is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
+     is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
     is_dm = isinstance(message.channel, discord.DMChannel)
 
     if is_allowed_channel or is_dm:
@@ -264,7 +264,8 @@ async def imagine(ctx, *, prompt: str):
     # --- ৩. অন রেডি ---
 @bot.event
 async def on_ready():
-    print(f'{bot.user} Online!')
+   print(f'Logged in as {bot.user.name}')
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my love RedOx/Hxb ❤️'))
     check_youtube_task.start() # ইউটিউব চেকার শুরু
 
 @bot.command()
