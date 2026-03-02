@@ -17,7 +17,8 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 OWNER_IDS = [906758055167950869, 1028589017861718076] 
 ALLOWED_CHANNEL_ID = 1477737431100035344 
-
+CHANNEL_ID = 'YOUR_YOUTUBE_CHANNEL_ID' # তোমার ইউটিউব চ্যানেলের আইডি
+DISCORD_CHANNEL_ID = 123456789012345678  # যে ডিসকর্ড চ্যানেলে লিঙ্ক যাবে তার আইডি
 # গালি এবং হার্ড মোড লিস্ট
 BANNED_WORDS = ['khisti', 'khanki', 'magi', 'sala', 'saala', 'gasti', 'bal', 'baal', 'chod', 'choda', 
     'gaali', 'harami', 'bokachoda', 'madarchod', 'bejonma', 'suorer', 'kuttr', 'cudbo', '12vatari',
@@ -167,7 +168,45 @@ async def on_message(message):
             await message.channel.send(f"🚫 {message.author.mention}, গালি দেওয়ার জন্য তুমি **৫ মিনিট** মিউট!", delete_after=10)
             return
         except: pass
+# --- ইউটিউব ডাটা ফেচ ফাংশন ---
+youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
+def get_latest_video():
+    try:
+        request = youtube.search().list(
+            channelId=YT_CHANNEL_ID,
+            part='snippet,id',
+            order='date',
+            maxResults=1
+        )
+        response = request.execute()
+        if response['items']:
+            v_id = response['items'][0]['id'].get('videoId')
+            v_title = response['items'][0]['snippet']['title']
+            return v_id, v_title
+    except Exception as e:
+        print(f"YouTube API Error: {e}")
+    return None, None
+
+# --- ইউটিউব অটো চেক টাস্ক (৫ মিনিট পর পর) ---
+@tasks.loop(minutes=5)
+async def check_youtube_task():
+    global last_video_id
+    v_id, v_title = get_latest_video()
+
+    if v_id and v_id != last_video_id:
+        if last_video_id is not None:
+            channel = bot.get_channel(DISCORD_ANNOUNCE_CHANNEL_ID)
+            if channel:
+                embed = discord.Embed(
+                    title="🎬 নতুন ভিডিও আপলোড হয়েছে!",
+                    description=f"**{v_title}**\n\n[ভিডিওটি দেখতে এখানে ক্লিক করুন](https://www.youtube.com/watch?v={v_id})",
+                    color=0xff0000
+                )
+                embed.set_image(url=f"https://img.youtube.com/vi/{v_id}/maxresdefault.jpg")
+                await channel.send(content="@everyone", embed=embed)
+        last_video_id = v_id
+        
     # --- ৩. AI চ্যাট লজিক ---
     is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
     is_dm = isinstance(message.channel, discord.DMChannel)
@@ -222,6 +261,11 @@ async def imagine(ctx, *, prompt: str):
     embed = discord.Embed(title=f"🎨 {prompt}", color=0xff69b4)
     embed.set_image(url=img_url)
     await ctx.send(embed=embed)
+    # --- ৩. অন রেডি ---
+@bot.event
+async def on_ready():
+    print(f'{bot.user} Online!')
+    check_youtube_task.start() # ইউটিউব চেকার শুরু
 
 @bot.command()
 async def play(ctx, *, search: str):
