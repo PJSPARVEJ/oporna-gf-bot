@@ -169,8 +169,7 @@ async def on_message(message):
             await message.channel.send(f"🚫 {message.author.mention}, গালি দেওয়ার জন্য তুমি **৫ মিনিট** মিউট!", delete_after=10)
             return
         except: pass
-# --- ইউটিউব ডাটা ফেচ ফাংশন ---
-youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+# --- ইউটিউব ডাটা ফেচ ফাংশন --
 
 def get_latest_video():
     try:
