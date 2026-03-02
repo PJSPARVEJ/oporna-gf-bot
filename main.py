@@ -78,41 +78,57 @@ FFMPEG_OPTIONS = {
     'options': '-vn'
 }
 
-# --- ১. বাংলা ভয়েস ওয়েলকাম ---
+# --- ১. বাংলা ভয়েস ওয়েলকাম (Optimized Version) ---
 @bot.event
 async def on_voice_state_update(member, before, after):
+    # বট নিজে জয়েন করলে বা একই চ্যানেলে মুভ করলে ইগনোর করবে
     if member.id == bot.user.id or (before.channel == after.channel):
         return
 
+    # মেম্বার যদি নতুন কোনো চ্যানেলে ঢুকে থাকে
     if after.channel is not None:
         try:
-            # আগের কোনো কানেকশন থাকলে ডিসকানেক্ট করা
+            # আগে থেকে কানেক্টেড থাকলে সেটা ডিসকানেক্ট করা (WebSocket 4006 রোধ করতে)
             existing_vc = discord.utils.get(bot.voice_clients, guild=member.guild)
-            if existing_vc: 
+            if existing_vc:
+                if existing_vc.is_playing():
+                    existing_vc.stop()
                 await existing_vc.disconnect(force=True)
+                await asyncio.sleep(0.5) # ছোট ব্রেক
 
-            vc = await after.channel.connect(reconnect=True, self_deaf=True)
-
+            # নতুন করে কানেক্ট করা
+            vc = await after.channel.connect(reconnect=True, timeout=10.0, self_deaf=True)
+            
+            # টেক্সট জেনারেট করা
             if member.id in OWNER_IDS:
                 txt = f"স্বাগতম বাবু! জান, তুমি কেমন আছো?"
             else:
                 txt = f"হ্যালো {member.display_name}, আমাদের ভয়েস চ্যানেলে স্বাগতম।"
 
-            tts = gTTS(text=txt, lang='bn')
+            # TTS ফাইল তৈরি
             filename = f"welcome_{member.id}.mp3"
+            tts = gTTS(text=txt, lang='bn')
             tts.save(filename)
 
-            # FFmpeg দিয়ে প্লে করা
-            vc.play(discord.FFmpegPCMAudio(filename, **FFMPEG_OPTIONS))
+            # অডিও প্লে করা
+            # লোকাল ফাইলের জন্য জটিল অপশন লাগে না, শুধু ভিডিও ডিসেবল করলেই হয়
+            options = "-vn"
+            vc.play(discord.FFmpegPCMAudio(filename, options=options))
 
+            # অডিও শেষ না হওয়া পর্যন্ত লুপ
             while vc.is_playing():
                 await asyncio.sleep(1)
             
+            # প্লে শেষ হলে ডিসকানেক্ট এবং ফাইল রিমুভ
             await vc.disconnect()
-            if os.path.exists(filename): 
+            if os.path.exists(filename):
                 os.remove(filename)
+
         except Exception as e:
             print(f"Voice Error: {e}")
+            # এরর হলে যেন মেমরি ক্লিন থাকে
+            if 'vc' in locals() and vc.is_connected():
+                await vc.disconnect(force=True)
 
 # --- ২. হার্ড সিকিউরিটি ---
 @bot.event
