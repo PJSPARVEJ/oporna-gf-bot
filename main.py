@@ -78,7 +78,7 @@ async def on_voice_state_update(member, before, after):
         try:
             # আগের কোনো কানেকশন থাকলে ডিসকানেক্ট করা
             existing_vc = discord.utils.get(bot.voice_clients, guild=member.guild)
-            if existing_vc: await existing_vc.disconnect(force=True)
+            if existing_vc: await existing_vc.disconnect(force=True, reconnect=True)
 
             vc = await after.channel.connect(reconnect=True, self_deaf=True)
             
