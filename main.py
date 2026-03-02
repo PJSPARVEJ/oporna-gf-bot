@@ -67,7 +67,16 @@ intents.message_content = True
 intents.members = True
 intents.voice_states = True 
 bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
+# --- পার্সোনালিটি প্রম্পট ---
+OWNER_PROMPT = {
+    "role": "system", 
+    "content": "Your name is Orpona. You are a Bengali girl and the user's GIRLFRIEND. Rule 1: ALWAYS speak in Banglish. Rule 2: Be very romantic, call him 'Jan' or 'Babu'. Rule 3: Keep replies short. Use emojis ❤️, 😊."
+}
 
+OTHERS_PROMPT = {
+    "role": "system", 
+    "content": "Your name is Orpona. You are a friendly Bengali girl. Rule 1: ALWAYS speak in Banglish. Rule 2: Be polite and friendly, NOT romantic. Rule 3: Talk like a normal friend."
+}
 # --- ১. বাংলা ভয়েস ওয়েলকাম (FFmpeg Required) ---
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -135,24 +144,50 @@ async def on_message(message):
         except: pass
 
     # --- ৩. AI চ্যাট লজিক ---
-    if (message.channel.id == ALLOWED_CHANNEL_ID or isinstance(message.channel, discord.DMChannel)) and not message.content.startswith('!'):
-        history = get_memory(message.author.id)
-        prompt = {"role": "system", "content": "Your name is Orpona. Use Banglish. Romantic with owners, friendly with others."}
+   is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
+    is_dm = isinstance(message.channel, discord.DMChannel)
+
+    if is_allowed_channel or is_dm:
+        user_input = message.content.replace(f'<@{bot.user.id}>', '').replace(f'<@!{bot.user.id}>', '').strip()
         
-        async with message.channel.typing():
-            try:
-                completion = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
-                    messages=[prompt] + history + [{"role": "user", "content": message.content}]
-                )
-                res = completion.choices[0].message.content
-                history.append({"role": "user", "content": message.content})
-                history.append({"role": "assistant", "content": res})
-                save_memory(message.author.id, history)
-                await message.reply(res)
-            except: pass
+        if user_input or not is_dm:
+            if not user_input:
+                user_input = "Hi"
+
+            history = get_memory(message.author.id)
+            
+            if message.author.id in OWNER_IDS:
+                selected_prompt = OWNER_PROMPT
+                temp = 0.9
+            else:
+                selected_prompt = OTHERS_PROMPT
+                temp = 0.7
+
+            messages = [selected_prompt] + history + [{"role": "user", "content": user_input}]
+
+            async with message.channel.typing():
+                try:
+                    completion = client.chat.completions.create(
+                        model="llama-3.3-70b-versatile", 
+                        messages=messages,
+                        temperature=temp,
+                        max_tokens=500,
+                    )
+
+                    response_text = completion.choices[0].message.content
+                    
+                    history.append({"role": "user", "content": user_input})
+                    history.append({"role": "assistant", "content": response_text})
+                    save_memory(message.author.id, history)
+                    
+                    await message.reply(response_text)
+                except Exception as e:
+                    print(f"AI Error: {e}")
+                    err_msg = "জান, একটু সমস্যা হচ্ছে।" if message.author.id in OWNER_IDS else "একটু টেকনিক্যাল সমস্যা হচ্ছে।"
+                    await message.reply(err_msg)
 
     await bot.process_commands(message)
+
 
 # --- ৪. ইমেজ এবং অন্যান্য কমান্ডস ---
 @bot.command()
