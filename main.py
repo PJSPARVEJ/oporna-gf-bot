@@ -265,9 +265,8 @@ async def imagine(ctx, *, prompt: str):
     # --- ৩. অন রেডি ---
 @bot.event
 async def on_ready():
-   print(f'Logged in as {bot.user.name}')
+    print(f'Logged in as {bot.user.name}')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my love RedOx/Hxb ❤️'))
-    check_youtube_task.start() # ইউটিউব চেকার শুরু
 
 @bot.command()
 async def play(ctx, *, search: str):
