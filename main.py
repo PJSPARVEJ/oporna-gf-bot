@@ -209,7 +209,6 @@ async def check_youtube_task():
         last_video_id = v_id
         
     # --- ৩. AI চ্যাট লজিক ---
-    is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
     is_dm = isinstance(message.channel, discord.DMChannel)
 
     if is_allowed_channel or is_dm:
