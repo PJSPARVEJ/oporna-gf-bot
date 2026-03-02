@@ -19,7 +19,7 @@ YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY') # .env তে যোগ করু
 OWNER_IDS = [906758055167950869, 1028589017861718076] 
 ALLOWED_CHANNEL_ID = 1477737431100035344 
 CHANNEL_ID = 'YOUR_YOUTUBE_CHANNEL_ID' # তোমার ইউটিউব চ্যানেলের আইডি
-DISCORD_CHANNEL_ID = 123456789012345678  # যে ডিসকর্ড চ্যানেলে লিঙ্ক যাবে তার আইডি
+DISCORD_CHANNEL_ID = 1474106188843974659  # যে ডিসকর্ড চ্যানেলে লিঙ্ক যাবে তার আইডি
 # গালি এবং হার্ড মোড লিস্ট
 BANNED_WORDS = ['khisti', 'khanki', 'magi', 'sala', 'saala', 'gasti', 'bal', 'baal', 'chod', 'choda', 
     'gaali', 'harami', 'bokachoda', 'madarchod', 'bejonma', 'suorer', 'kuttr', 'cudbo', '12vatari',
