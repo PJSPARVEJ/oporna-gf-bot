@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY') # .env তে যোগ করুন
 
 OWNER_IDS = [906758055167950869, 1028589017861718076] 
 ALLOWED_CHANNEL_ID = 1477737431100035344 
