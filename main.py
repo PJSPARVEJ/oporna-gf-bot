@@ -17,9 +17,9 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY') # .env তে যোগ করুন
 
 OWNER_IDS = [906758055167950869, 1028589017861718076] 
-ALLOWED_CHANNEL_ID = 1477737431100035344 
-CHANNEL_ID = 'YOUR_YOUTUBE_CHANNEL_ID' # তোমার ইউটিউব চ্যানেলের আইডি
-DISCORD_CHANNEL_ID = 1474106188843974659  # যে ডিসকর্ড চ্যানেলে লিঙ্ক যাবে তার আইডি
+ALLOWED_CHANNEL_ID = [1477737431100035344]
+CHANNEL_ID = ['YOUR_YOUTUBE_CHANNEL_ID'] # তোমার ইউটিউব চ্যানেলের আইডি
+DISCORD_CHANNEL_ID = [1474106188843974659]  # যে ডিসকর্ড চ্যানেলে লিঙ্ক যাবে তার আইডি
 # গালি এবং হার্ড মোড লিস্ট
 BANNED_WORDS = ['khisti', 'khanki', 'magi', 'sala', 'saala', 'gasti', 'bal', 'baal', 'chod', 'choda', 
     'gaali', 'harami', 'bokachoda', 'madarchod', 'bejonma', 'suorer', 'kuttr', 'cudbo', '12vatari',
@@ -174,7 +174,9 @@ async def on_message(message):
 
         
     # --- ৩. AI চ্যাট লজিক ---
+    is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID
     is_dm = isinstance(message.channel, discord.DMChannel)
+
 
     if is_allowed_channel or is_dm:
         user_input = message.content.replace(f'<@{bot.user.id}>', '').replace(f'<@!{bot.user.id}>', '').strip()
