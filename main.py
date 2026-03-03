@@ -6,6 +6,7 @@ import sqlite3
 import json
 import os
 import yt_dlp as youtube_dl
+import youtube_dl
 import asyncio
 import time
 from datetime import datetime, timedelta
@@ -242,9 +243,13 @@ async def play(ctx, *, search: str):
                     print(f'Player error: {error}')
 
             # Ekhane error ashar kono sujog nei
-            ctx.voice_client.play(player, after=after_playing)
-            await ctx.send(f'🎶 এখন বাজছে: **{player.title}**')
+           ctx.voice_client.play(
+                player, 
+                after=lambda *args: print(f'Player error: {args[0]}') if args and args[0] else None
+            )
 
+            await ctx.send(f'🎶 এখন বাজছে: **{player.title}**')
+        
         except Exception as e:
             print(f"Play Error: {e}")
             # Circular import error thakle ekhane message show korbe
