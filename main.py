@@ -46,6 +46,7 @@ ytdl_format_options = {
 }
 
 ffmpeg_options = {
+    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn',
 }
 
@@ -232,8 +233,9 @@ async def play(ctx, *, search: str):
         try:
             player = await YTDLSource.from_url(search, loop=bot.loop, stream=True)
             
-            if ctx.voice_client.is_playing():
+            if ctx.voice_client.is_playing() or ctx.voice_client.is_paused():
                 ctx.voice_client.stop()
+                await asyncio.sleep(1) # FFmpeg-ke terminate hote ১ সেকেন্ড সময় দিন
 
             # Space/Indentation gulo niche thik kora holo
             ctx.voice_client.play(
