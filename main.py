@@ -231,28 +231,21 @@ async def play(ctx, *, search: str):
 
     async with ctx.typing():
         try:
-            # YTDLSource theke audio source ready kora
             player = await YTDLSource.from_url(search, loop=bot.loop, stream=True)
             
             if ctx.voice_client.is_playing():
                 ctx.voice_client.stop()
 
-            # Lambda-r bodole ekti named function
-            def after_playing(error):
-                if error:
-                    print(f'Player error: {error}')
-
-            # Ekhane error ashar kono sujog nei
-           ctx.voice_client.play(
+            # Space/Indentation gulo niche thik kora holo
+            ctx.voice_client.play(
                 player, 
                 after=lambda *args: print(f'Player error: {args[0]}') if args and args[0] else None
             )
 
             await ctx.send(f'🎶 এখন বাজছে: **{player.title}**')
-        
+
         except Exception as e:
             print(f"Play Error: {e}")
-            # Circular import error thakle ekhane message show korbe
             await ctx.send(f"গানটা প্লে করতে পারলাম না। Error: {e}")
         
 @bot.command()
