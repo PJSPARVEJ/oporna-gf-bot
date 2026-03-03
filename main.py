@@ -190,7 +190,7 @@ async def on_message(message):
                 temp = 0.9
             else:
                 selected_prompt = OTHERS_PROMPT
-                temp = 0.9
+                temp = 0.7
 
             messages = [selected_prompt] + history + [{"role": "user", "content": user_input}]
 
@@ -231,7 +231,7 @@ async def imagine(ctx, *, prompt: str):
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my love RedOx/Hxb ❤️'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my love RedOx/Hxb/Rabbi ❤️'))
 
 @bot.command()
 async def play(ctx, *, search: str):
