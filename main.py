@@ -6,7 +6,6 @@ import sqlite3
 import json
 import os
 import yt_dlp as youtube_dl
-import youtube_dl
 import asyncio
 import time
 from datetime import datetime, timedelta
