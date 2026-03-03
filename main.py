@@ -174,7 +174,7 @@ async def on_message(message):
 
         
     # --- ৩. AI চ্যাট লজিক ---
-    is_allowed_channel = message.channel.id == 1477737431100035344  # ID do seu canal
+    is_allowed_channel = message.channel.id == 1477737431100035344, 1478325241670275153  # ID do seu canal
     is_dm = isinstance(message.channel, discord.DMChannel)
     if is_allowed_channel or is_dm:
         user_input = message.content.replace(f'<@{bot.user.id}>', '').replace(f'<@!{bot.user.id}>', '').strip()
@@ -190,7 +190,7 @@ async def on_message(message):
                 temp = 0.9
             else:
                 selected_prompt = OTHERS_PROMPT
-                temp = 0.7
+                temp = 0.9
 
             messages = [selected_prompt] + history + [{"role": "user", "content": user_input}]
 
