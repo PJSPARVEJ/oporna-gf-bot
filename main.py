@@ -235,7 +235,7 @@ async def play(ctx, *, search: str):
             
             if ctx.voice_client.is_playing() or ctx.voice_client.is_paused():
                 ctx.voice_client.stop()
-                await asyncio.sleep(9.5) # FFmpeg-ke terminate hote ১ সেকেন্ড সময় দিন
+                await asyncio.sleep(1.5) # FFmpeg-ke terminate hote ১ সেকেন্ড সময় দিন
 
             # Space/Indentation gulo niche thik kora holo
             ctx.voice_client.play(
