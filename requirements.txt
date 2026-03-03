@@ -4,3 +4,4 @@ PyNaCl
 python-dotenv
 groq
 yt-dlp
+yt-dlp==2025.1.26
