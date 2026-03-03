@@ -242,10 +242,12 @@ async def play(ctx, *, search: str):
             def after_playing(error):
                 if error:
                     print(f'Player error: {error}')
+            ctx.voice_client.play(player, after=after_playing)
                 # Ekhane apni chaile porer gaan queue theke play korar logic dite paren
 
             # Play shuru kora
-            ctx.voice_client.play(player, after=after_playing)
+            ctx.voice_client.play(player, after=lambda error: print(f'Player error: {error}') if error else None)
+            
             await ctx.send(f'🎶 এখন বাজছে: **{player.title}**')
 
         except Exception as e:
