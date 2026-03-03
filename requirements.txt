@@ -3,3 +3,4 @@ gTTS
 PyNaCl
 python-dotenv
 groq
+yt-dlp
