@@ -5,6 +5,7 @@ from gtts import gTTS
 import sqlite3
 import json
 import os
+import yt_dlp as youtube_dl
 import asyncio
 import time
 from datetime import datetime, timedelta
@@ -26,8 +27,6 @@ BANNED_WORDS = ['khisti', 'khanki', 'magi', 'sala', 'saala', 'gasti', 'bal', 'ba
     'কুত্তা', 'শুয়োর', 'হারামি', 'বাল', 'খানকি', 'মাগি', 'শালা', 'চোদ', 'বোকাসোদা', 'খানকি', '১২ ভাতারি মাগি', 'চুদব',
     'sex', 'sexy', 'chuda', 'nude', 'hot', 'pussy', 'dick', 'bitch', 'slvt'
 ]
-
-import yt_dlp as youtube_dl
 
 # YTDL Configuration
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -231,27 +230,24 @@ async def play(ctx, *, search: str):
 
     async with ctx.typing():
         try:
-            # YTDLSource class theke player toiri
+            # YTDLSource theke audio source ready kora
             player = await YTDLSource.from_url(search, loop=bot.loop, stream=True)
             
-            # Jodi age theke kichu baje, sheta bondho kora
             if ctx.voice_client.is_playing():
                 ctx.voice_client.stop()
 
-            # Error handling function (Lambda-r bodole eti use korun)
+            # Lambda-r bodole ekti named function
             def after_playing(error):
                 if error:
                     print(f'Player error: {error}')
-            ctx.voice_client.play(player, after=after_playing)
-                # Ekhane apni chaile porer gaan queue theke play korar logic dite paren
 
-            # Play shuru kora
-            ctx.voice_client.play(player, after=lambda error: print(f'Player error: {error}') if error else None)
-            
+            # Ekhane error ashar kono sujog nei
+            ctx.voice_client.play(player, after=after_playing)
             await ctx.send(f'🎶 এখন বাজছে: **{player.title}**')
 
         except Exception as e:
             print(f"Play Error: {e}")
+            # Circular import error thakle ekhane message show korbe
             await ctx.send(f"গানটা প্লে করতে পারলাম না। Error: {e}")
         
 @bot.command()
