@@ -217,7 +217,7 @@ async def imagine(ctx, *, prompt: str):
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my love RedOx/Hxb/Rabbi ❤️'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my love RedOx ❤️'))
 
 @bot.command(name='play', help='Plays a song from YouTube')
 async def play(ctx, *, search: str):
