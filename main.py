@@ -219,23 +219,6 @@ async def on_ready():
     print(f'Logged in as {bot.user.name}')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my love RedOx/Hxb/Rabbi ❤️'))
 
-@bot.command(name='join', help='Bot joins your voice channel')
-async def join(ctx):
-    if ctx.author.voice:
-        channel = ctx.author.voice.channel
-        await channel.connect()
-        await ctx.send(f'Joined {channel.name}')
-    else:
-        await ctx.send("You are not connected to a voice channel!")
-
-@bot.command(name='leave', help='Bot leaves the voice channel')
-async def leave(ctx):
-    if ctx.voice_client:
-        await ctx.voice_client.disconnect()
-        await ctx.send("Left the voice channel.")
-    else:
-        await ctx.send("I am not in a voice channel!")
-
 @bot.command(name='play', help='Plays a song from YouTube')
 async def play(ctx, *, search: str):
     if not ctx.voice_client:
@@ -243,44 +226,29 @@ async def play(ctx, *, search: str):
             channel = ctx.author.voice.channel
             await channel.connect()
         else:
-            await ctx.send("You need to be in a voice channel or summon me using !join.")
+            await ctx.send("আগে একটা ভয়েস চ্যানেলে জয়েন করো বাবু! 🌸")
             return
 
     async with ctx.typing():
         try:
+            # YTDLSource class theke player banano
             player = await YTDLSource.from_url(search, loop=bot.loop, stream=True)
+            
+            # Jodi age theke kichu baje, sheta bondho kora
+            if ctx.voice_client.is_playing():
+                ctx.voice_client.stop()
+
+            # Music play kora (Error check shoho)
+            def check_error(error):
+                if error:
+                    print(f'Player error: {error}')
+
+            ctx.voice_client.play(player, after=check_error)
+            await ctx.send(f'🎶 এখন বাজছে: **{player.title}**')
+
         except Exception as e:
-            await ctx.send(f"An error occurred: {e}")
-            return
-
-        ctx.voice_client.stop()
-        ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
-
-    await ctx.send(f'Now playing: {player.title}')
-
-@bot.command(name='pause', help='Pause the currently playing song')
-async def pause(ctx):
-    if ctx.voice_client and ctx.voice_client.is_playing():
-        ctx.voice_client.pause()
-        await ctx.send("Paused ⏸️")
-    else:
-        await ctx.send("Nothing is playing right now.")
-
-@bot.command(name='resume', help='Resume a paused song')
-async def resume(ctx):
-    if ctx.voice_client and ctx.voice_client.is_paused():
-        ctx.voice_client.resume()
-        await ctx.send("Resumed ▶️")
-    else:
-        await ctx.send("Nothing is paused right now.")
-
-@bot.command(name='stop', help='Stop the currently playing song')
-async def stop(ctx):
-    if ctx.voice_client:
-        ctx.voice_client.stop()
-        await ctx.send("Stopped the music.")
-    else:
-        await ctx.send("Nothing is playing right now.")
+            print(f"Play Error: {e}")
+            await ctx.send(f"গানটা প্লে করতে পারলাম না। Error: {e}")
         
 @bot.command()
 async def help(ctx):
