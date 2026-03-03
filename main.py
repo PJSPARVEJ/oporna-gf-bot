@@ -117,7 +117,7 @@ async def on_message(message):
 
         
     # --- ৩. AI চ্যাট লজিক ---
-    is_allowed_channel = message.channel.id == ALLOWED_CHANNEL_ID  # ID do seu canal
+    is_allowed_channel = message.channel.id in ALLOWED_CHANNEL_ID  # ID do seu canal
     is_dm = isinstance(message.channel, discord.DMChannel)
     if is_allowed_channel or is_dm:
         user_input = message.content.replace(f'<@{bot.user.id}>', '').replace(f'<@!{bot.user.id}>', '').strip()
