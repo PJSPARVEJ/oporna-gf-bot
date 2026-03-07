@@ -131,9 +131,9 @@ async def on_message(message):
     if message.author == bot.user: return
 
     # Anti-Link
-    if ("http" in message.content.lower() or "www." in message.content.lower()) and message.author.id not in OWNER_IDS:
-        await message.delete()
-        return await message.channel.send(f"🚫 {message.author.mention}, Security Hard Mode এ লিঙ্ক নিষেধ!", delete_after=5)
+    #if ("http" in message.content.lower() or "www." in message.content.lower()) and message.author.id not in OWNER_IDS:
+        #await message.delete()
+        #return await message.channel.send(f"🚫 {message.author.mention}, Security Hard Mode এ লিঙ্ক নিষেধ!", delete_after=5)
 
     # Anti-Spam
     u_id = message.author.id
